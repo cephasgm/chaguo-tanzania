@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaguo Desktop - Internet Freedom for Tanzania</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🌐</div>
+                <h1>Chaguo</h1>
+                <p class="logo-subtitle">Internet Freedom Tool</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#connect" class="nav-item" data-page="connect">
+                    <i class="fas fa-plug"></i>
+                    <span>Connect</span>
+                </a>
+                <a href="#servers" class="nav-item" data-page="servers">
+                    <i class="fas fa-server"></i>
+                    <span>Servers</span>
+                </a>
+                <a href="#protocols" class="nav-item" data-page="protocols">
+                    <i class="fas fa-code-branch"></i>
+                    <span>Protocols</span>
+                </a>
+                <a href="#settings" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#tools" class="nav-item" data-page="tools">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools</span>
+                </a>
+            </nav>
+            
+            <div class="connection-status">
+                <div class="status-indicator" id="global-status-indicator"></div>
+                <div class="status-text" id="global-status-text">Disconnected</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+                
+                <div class="top-bar-actions">
+                    <button class="btn-icon" id="theme-toggle" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <button class="btn-icon" id="notifications-btn" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge" id="notification-count">0</span>
+                    </button>
+                    
+                    <div class="user-menu">
+                        <button class="btn-icon" id="user-menu-btn">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div class="user-menu-dropdown" id="user-menu-dropdown">
+                            <a href="#"><i class="fas fa-user-circle"></i> Profile</a>
+                            <a href="#"><i class="fas fa-history"></i> Connection History</a>
+                            <a href="#"><i class="fas fa-chart-bar"></i> Statistics</a>
+                            <hr>
+                            <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                            <a href="#"><i class="fas fa-info-circle"></i> About</a>
+                            <hr>
+                            <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Exit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="page-content" id="page-content">
+                <!-- Dashboard Page -->
+                <div class="page active" id="page-dashboard">
+                    <div class="page-header">
+                        <h2>Dashboard</h2>
+                        <p>Overview of your connection and network status</p>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Quick Connect Card -->
+                        <div class="card quick-connect">
+                            <h3><i class="fas fa-bolt"></i> Quick Connect</h3>
+                            <div class="connect-controls">
+                                <button class="btn-primary" id="quick-connect-btn">
+                                    <i class="fas fa-plug"></i> Connect
+                                </button>
+                                <button class="btn-secondary" id="quick-disconnect-btn">
+                                    <i class="fas fa-power-off"></i> Disconnect
+                                </button>
+                            </div>
+                            <div class="protocol-selector">
+                                <label>Protocol:</label>
+                                <select id="protocol-select">
+                                    <option value="auto">Auto (Best Available)</option>
+                                    <option value="v2ray-ws">V2Ray + WebSocket</option>
+                                    <option value="shadowsocks">Shadowsocks</option>
+                                    <option value="wireguard">WireGuard</option>
+                                    <option value="trojan">Trojan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Connection Status Card -->
+                        <div class="card connection-status-card">
+                            <h3><i class="fas fa-signal"></i> Connection Status</h3>
+                            <div class="status-details">
+                                <div class="status-row">
+                                    <span class="label">Status:</span>
+                                    <span class="value" id="connection-status-text">Disconnected</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="label">Protocol:</span>
+                                    <span class="value" id="connection-protocol">-</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="label">Duration:</span>
+                                    <span class="value" id="connection-duration">00:00:00</span>
+                                </div>
+                                <div class="status-row">
+                                    <span class="label">Data Usage:</span>
+                                    <span class="value" id="data-usage">0 MB</span>
+                                </div>
+                            </div>
+                            <button class="btn-secondary" id="test-connection-btn">
+                                <i class="fas fa-sync-alt"></i> Test Connection
+                            </button>
+                        </div>
+
+                        <!-- Server Status Card -->
+                        <div class="card server-status">
+                            <h3><i class="fas fa-server"></i> Server Status</h3>
+                            <div class="servers-list" id="servers-list">
+                                <!-- Server items will be added here -->
+                            </div>
+                            <button class="btn-secondary" id="refresh-servers-btn">
+                                <i class="fas fa-redo"></i> Refresh
+                            </button>
+                        </div>
+
+                        <!-- Network Info Card -->
+                        <div class="card network-info">
+                            <h3><i class="fas fa-network-wired"></i> Network Information</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">External IP:</span>
+                                    <span class="value" id="external-ip">Checking...</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Location:</span>
+                                    <span class="value" id="location">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Latency:</span>
+                                    <span class="value" id="latency">- ms</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">ISP:</span>
+                                    <span class="value" id="isp">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions Card -->
+                        <div class="card quick-actions">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                            <div class="actions-grid">
+                                <button class="action-btn" id="action-mesh">
+                                    <i class="fas fa-wifi"></i>
+                                    <span>Mesh Network</span>
+                                </button>
+                                <button class="action-btn" id="action-obfuscate">
+                                    <i class="fas fa-mask"></i>
+                                    <span>Obfuscate</span>
+                                </button>
+                                <button class="action-btn" id="action-recovery">
+                                    <i class="fas fa-heartbeat"></i>
+                                    <span>Self-Heal</span>
+                                </button>
+                                <button class="action-btn" id="action-settings">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Settings</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity Card -->
+                        <div class="card recent-activity">
+                            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                            <div class="activity-list" id="activity-list">
+                                <!-- Activity items will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connect Page -->
+                <div class="page" id="page-connect">
+                    <div class="page-header">
+                        <h2>Connect</h2>
+                        <p>Manage your VPN connections</p>
+                    </div>
+
+                    <div class="connect-page">
+                        <div class="connect-left">
+                            <div class="card connection-controls">
+                                <h3><i class="fas fa-sliders-h"></i> Connection Controls</h3>
+                                
+                                <div class="control-group">
+                                    <label>Select Protocol</label>
+                                    <div class="protocol-buttons" id="protocol-buttons">
+                                        <!-- Protocol buttons will be added here -->
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label>Server Selection</label>
+                                    <div class="server-selector" id="server-selector">
+                                        <!-- Server selector will be added here -->
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label>Obfuscation Settings</label>
+                                    <div class="obfuscation-controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="enable-obfuscation" checked>
+                                            <span>Enable Traffic Obfuscation</span>
+                                        </label>
+                                        <select id="obfuscation-pattern">
+                                            <option value="random">Random Pattern</option>
+                                            <option value="whatsapp">Mimic WhatsApp</option>
+                                            <option value="youtube">Mimic YouTube</option>
+                                            <option value="cdn">Mimic CDN</option>
+                                            <option value="normal">Normal Traffic</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="connect-actions">
+                                    <button class="btn-primary btn-lg" id="main-connect-btn">
+                                        <i class="fas fa-plug"></i> Connect
+                                    </button>
+                                    <button class="btn-secondary btn-lg" id="main-disconnect-btn">
+                                        <i class="fas fa-power-off"></i> Disconnect
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="connect-right">
+                            <div class="card connection-info">
+                                <h3><i class="fas fa-info-circle"></i> Connection Information</h3>
+                                <div class="info-display" id="detailed-connection-info">
+                                    <!-- Detailed info will be added here -->
+                                </div>
+                            </div>
+
+                            <div class="card advanced-settings">
+                                <h3><i class="fas fa-cogs"></i> Advanced Settings</h3>
+                                <div class="advanced-controls">
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="auto-connect">
+                                        <span>Auto-connect on startup</span>
+                                    </label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="kill-switch" checked>
+                                        <span>Enable Kill Switch</span>
+                                    </label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="auto-recovery" checked>
+                                        <span>Enable Self-Healing</span>
+                                    </label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="mesh-sharing">
+                                        <span>Enable Mesh Sharing</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocols Page -->
+                <div class="page" id="page-protocols">
+                    <div class="page-header">
+                        <h2>Protocols</h2>
+                        <p>Configure and manage connection protocols</p>
+                    </div>
+
+                    <div class="protocols-grid" id="protocols-grid">
+                        <!-- Protocol cards will be added here -->
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="page-settings">
+                    <div class="page-header">
+                        <h2>Settings</h2>
+                        <p>Configure application settings</p>
+                    </div>
+
+                    <div class="settings-tabs">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-tab="general">General</button>
+                            <button class="tab-btn" data-tab="connection">Connection</button>
+                            <button class="tab-btn" data-tab="security">Security</button>
+                            <button class="tab-btn" data-tab="advanced">Advanced</button>
+                        </div>
+
+                        <div class="tab-content active" id="tab-general">
+                            <!-- General settings -->
+                        </div>
+
+                        <div class="tab-content" id="tab-connection">
+                            <!-- Connection settings -->
+                        </div>
+
+                        <div class="tab-content" id="tab-security">
+                            <!-- Security settings -->
+                        </div>
+
+                        <div class="tab-content" id="tab-advanced">
+                            <!-- Advanced settings -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-left">
+                    <span>Chaguo Desktop v<span id="app-version">1.0.0</span></span>
+                    <span class="footer-separator">•</span>
+                    <span id="update-status">Checking for updates...</span>
+                </div>
+                <div class="footer-right">
+                    <span id="last-updated">Last updated: -</span>
+                    <span class="footer-separator">•</span>
+                    <span id="connected-peers">Peers: 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div class="notifications-panel" id="notifications-panel">
+            <div class="notifications-header">
+                <h3>Notifications</h3>
+                <button class="btn-icon" id="close-notifications">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="notifications-list" id="notifications-list">
+                <!-- Notifications will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="renderer.js"></script>
+</body>
+</html>
