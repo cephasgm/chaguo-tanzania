@@ -1,0 +1,215 @@
+# Electron Builder Configuration
+# This is the effective configuration after merging defaults and package.json
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - src/**/*
+  - node_modules/**/*
+  - package.json
+
+extraMetadata:
+  main: src/main/main.js
+
+appId: tz.chaguo.app
+productName: Chaguo
+copyright: Copyright © 2024 Chaguo Tanzania
+
+asar: true
+asarUnpack:
+  - node_modules/wireguard-wrapper/**/*
+  - node_modules/systeminformation/**/*
+
+compression: maximum
+npmRebuild: false
+
+publish:
+  provider: github
+  owner: cephasgm
+  repo: chaguo-tanzania
+  releaseType: release
+
+nsis:
+  oneClick: false
+  perMachine: true
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Chaguo
+  uninstallDisplayName: Chaguo Tanzania
+  include: build/installer.nsh
+  license: LICENSE
+  artifactName: Chaguo-Setup-${version}.${ext}
+
+mac:
+  category: public.app-category.networking
+  target:
+    - dmg
+    - zip
+  icon: build/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    - NSBluetoothAlwaysUsageDescription: Chaguo requires Bluetooth access for mesh networking
+    - NSBluetoothPeripheralUsageDescription: Chaguo requires Bluetooth access for mesh networking
+    - NSCameraUsageDescription: Chaguo requires camera access for QR code scanning
+    - NSLocationUsageDescription: Chaguo requires location access for network optimization
+    - NSMicrophoneUsageDescription: Chaguo does not use microphone
+    - NSDocumentsFolderUsageDescription: Chaguo needs to save configuration files
+    - NSDownloadsFolderUsageDescription: Chaguo needs to download configuration files
+  darkModeSupport: true
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+  background: build/background.png
+  iconSize: 128
+  iconTextSize: 16
+  window:
+    width: 540
+    height: 380
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: portable
+      arch:
+        - x64
+  icon: build/icon.ico
+  certificateFile: ''
+  certificatePassword: ''
+  verifyUpdateCodeSignature: false
+  signingHashAlgorithms:
+    - sha256
+  requestedExecutionLevel: highestAvailable
+  rfc3161TimeStampServer: http://timestamp.digicert.com
+
+portable:
+  artifactName: Chaguo-Portable-${version}.${ext}
+
+linux:
+  target:
+    - AppImage
+    - deb
+    - rpm
+    - snap
+  icon: build/icon.png
+  category: Network
+  maintainer: Chaguo Tanzania <contact@chaguo.tz>
+  vendor: Chaguo Tanzania
+  synopsis: Internet freedom toolkit for Tanzania
+  description: |
+    Chaguo is an open-source internet freedom toolkit designed to bypass
+    internet restrictions in Tanzania. It provides multiple protocols,
+    traffic obfuscation, and self-healing capabilities.
+  desktop:
+    Name: Chaguo
+    Comment: Internet freedom toolkit for Tanzania
+    Keywords: vpn;proxy;privacy;security;tanzania;
+    StartupNotify: false
+    StartupWMClass: chaguo-desktop
+  mimeTypes:
+    - application/x-chaguo-config
+
+appImage:
+  artifactName: Chaguo-${version}.${arch}.AppImage
+  desktop:
+    Name: Chaguo
+    Comment: Internet freedom toolkit for Tanzania
+    Exec: chaguo %U
+    Icon: chaguo
+    Terminal: false
+    Type: Application
+    Categories: Network;Utility;Security;
+
+snap:
+  confinement: strict
+  grade: stable
+  plugs:
+    - network
+    - network-bind
+    - bluetooth
+    - network-manager
+    - home
+    - x11
+    - opengl
+  environment:
+    TMPDIR: $SNAP_USER_DATA/tmp
+  apps:
+    chaguo:
+      command: desktop-launch $SNAP/usr/bin/chaguo
+      plugs:
+        - network
+        - network-bind
+        - bluetooth
+        - home
+        - x11
+        - opengl
+  parts:
+    chaguo:
+      plugin: nil
+      stage-packages:
+        - libappindicator3-1
+        - libnotify4
+        - libnss3
+        - libxss1
+        - libxtst6
+        - xdg-utils
+        - libasound2
+        - libgbm1
+        - wireguard
+        - wireguard-tools
+
+extraResources:
+  - from: build
+    to: .
+    filter:
+      - "**/*"
+
+afterPack: scripts/after-pack.js
+afterSign: scripts/after-sign.js
+
+buildDependenciesFromSource: false
+nodeGypRebuild: false
+
+electronDist: ''
+electronVersion: '25.0.0'
+
+removePackageScripts: true
+
+extraResources:
+  - build/entitlements.mac.plist
+  - build/icon.png
+  - build/icon.icns
+  - build/icon.ico
+
+forceCodeSigning: false
+
+protocols:
+  name: Chaguo Protocol
+  schemes:
+    - chaguo
+    - chaguo-vpn
+
+fileAssociations:
+  - ext: json
+    name: Chaguo Configuration
+    role: Viewer
+    mimeType: application/json
+  - ext: chaguo
+    name: Chaguo Configuration
+    role: Viewer
+    mimeType: application/x-chaguo-config
