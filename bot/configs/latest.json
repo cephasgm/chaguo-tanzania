@@ -17,20 +17,6 @@
         "path": "/ws",
         "host": "www.cloudflare.com"
       }
-    },
-    {
-      "id": "south-africa-1",
-      "name": "South Africa Server",
-      "host": "server1.sa.chaguo.tz",
-      "port": 8388,
-      "protocol": "shadowsocks",
-      "region": "za",
-      "config": {
-        "method": "chacha20-ietf-poly1305",
-        "password": "chaguo-tz-2024",
-        "plugin": "obfs-local",
-        "plugin_opts": "obfs=http"
-      }
     }
   ]
 }
