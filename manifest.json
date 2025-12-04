@@ -1,0 +1,26 @@
+{
+  "name": "Chaguo Tanzania",
+  "short_name": "Chaguo",
+  "description": "Internet Freedom for Tanzania",
+  "start_url": "/chaguo-tanzania/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2E7D32",
+  "icons": [
+    {
+      "src": "/chaguo-tanzania/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/chaguo-tanzania/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/chaguo-tanzania/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
