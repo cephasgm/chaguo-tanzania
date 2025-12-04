@@ -1,0 +1,32 @@
+{
+  "keys": [
+    {
+      "id": "main-signing-key-2024",
+      "algorithm": "Ed25519",
+      "publicKey": "3b6a27bcceb6a42d62a3a8d02a6f0d7365c5a6e7f3e6a8d2c5e6f7a8b9c0d1e2f",
+      "purpose": "config-signing",
+      "validFrom": "2024-01-01T00:00:00Z",
+      "validTo": "2024-12-31T23:59:59Z",
+      "revoked": false
+    },
+    {
+      "id": "backup-signing-key-2024",
+      "algorithm": "Ed25519",
+      "publicKey": "5e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+      "purpose": "config-signing-backup",
+      "validFrom": "2024-01-01T00:00:00Z",
+      "validTo": "2024-12-31T23:59:59Z",
+      "revoked": false
+    }
+  ],
+  "trustedDomains": [
+    "chaguo.tz",
+    "github.com/cephasgm",
+    "cdn.jsdelivr.net"
+  ],
+  "keyRotation": {
+    "intervalDays": 90,
+    "nextRotation": "2024-04-01T00:00:00Z",
+    "emergencyKey": "emergency-public-key-here"
+  }
+}
