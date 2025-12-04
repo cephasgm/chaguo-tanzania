@@ -1,0 +1,238 @@
+# Electron Builder Debug Configuration
+# Used for development and debugging
+
+extends: ./builder-effective-config.yaml
+
+productName: Chaguo (Debug)
+
+extraMetadata:
+  version: 1.0.0-dev
+  buildNumber: 1
+
+asar: false
+compression: store
+
+publish: null
+
+mac:
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  entitlements: null
+  entitlementsInherit: null
+  type: development
+
+win:
+  verifyUpdateCodeSignature: false
+  signingHashAlgorithms: []
+  certificateFile: null
+  certificatePassword: null
+
+linux:
+  target:
+    - dir
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: false
+  installerIcon: null
+  uninstallerIcon: null
+
+dmg:
+  background: null
+  iconSize: null
+  iconTextSize: null
+  window: null
+
+extraResources:
+  - from: build
+    to: .
+    filter:
+      - "**/*"
+  - from: configs
+    to: configs
+
+extraFiles:
+  - src
+  - package.json
+  - README.md
+  - HOW-TO-RUN.md
+
+directories:
+  output: dist-debug
+  buildResources: build
+
+files:
+  - src/**/*
+  - node_modules/**/*
+  - package.json
+  - configs/**/*
+  - scripts/**/*
+
+afterPack: scripts/debug-after-pack.js
+
+electronVersion: '25.0.0'
+
+nodeGypRebuild: false
+buildDependenciesFromSource: false
+
+artifactName: Chaguo-Debug-${version}-${arch}.${ext}
+
+extraMetadata:
+  debug: true
+  devTools: true
+  logLevel: debug
+
+environment:
+  NODE_ENV: development
+  DEBUG: '*'
+  ELECTRON_ENABLE_LOGGING: true
+  ELECTRON_ENABLE_STACK_DUMPING: true
+
+protocols: null
+fileAssociations: null
+
+linux:
+  desktop:
+    Name: Chaguo (Debug)
+    Comment: Internet freedom toolkit for Tanzania - Debug Build
+    StartupWMClass: chaguo-desktop-debug
+
+mac:
+  extendInfo:
+    - NSBluetoothAlwaysUsageDescription: Chaguo requires Bluetooth access for mesh networking (Debug)
+    - NSBluetoothPeripheralUsageDescription: Chaguo requires Bluetooth access for mesh networking (Debug)
+    - NSCameraUsageDescription: Chaguo requires camera access for QR code scanning (Debug)
+    - NSLocationUsageDescription: Chaguo requires location access for network optimization (Debug)
+    - NSMicrophoneUsageDescription: Chaguo does not use microphone (Debug)
+    - NSDocumentsFolderUsageDescription: Chaguo needs to save configuration files (Debug)
+    - NSDownloadsFolderUsageDescription: Chaguo needs to download configuration files (Debug)
+
+win:
+  requestedExecutionLevel: asInvoker
+
+# Debug-specific settings
+debug:
+  enabled: true
+  breakOnFirstLine: false
+  port: 5858
+  address: localhost
+  sourceMaps: true
+  nodeOptions: --inspect=5858
+  rendererDebugOptions:
+    webPreferences:
+      devTools: true
+      nodeIntegrationInWorker: true
+      webSecurity: false
+      allowRunningInsecureContent: true
+
+# Development tools
+devTools:
+  openDevTools:
+    mode: undocked
+  overlay:
+    warnings: true
+    errors: true
+
+# Logging configuration
+logging:
+  level: debug
+  file: chaguo-debug.log
+  console: true
+  fileLevel: verbose
+  consoleLevel: debug
+
+# Hot reload configuration
+hotReload:
+  enabled: true
+  port: 9080
+  host: localhost
+  webSocket: true
+
+# Test configuration
+test:
+  enabled: true
+  mocha:
+    timeout: 5000
+  spectron:
+    appPath: ./dist-debug/mac/Chaguo.app/Contents/MacOS/Chaguo
+    args: []
+
+# Monkey patches for debugging
+monkeyPatches:
+  - target: electron
+    patch: debug
+  - target: node_modules
+    patch: source-maps
+
+# Source maps configuration
+sourceMaps:
+  style: embedded
+  inline: true
+  vendor: false
+
+# Cache configuration for faster rebuilds
+cache:
+  enabled: true
+  directories:
+    - node_modules/.cache
+    - ~/.cache/electron-builder
+
+# Watch configuration
+watch:
+  enabled: true
+  patterns:
+    - src/**/*
+    - configs/**/*
+    - scripts/**/*
+  ignored:
+    - node_modules/**
+    - dist-debug/**
+
+# Build optimization for development
+optimization:
+  minimize: false
+  splitChunks: false
+  runtimeChunk: false
+  removeAvailableModules: false
+  removeEmptyChunks: false
+  mergeDuplicateChunks: false
+  flagIncludedChunks: false
+  occurrenceOrder: false
+  providedExports: false
+  usedExports: false
+  concatenateModules: false
+  sideEffects: false
+
+# Development server
+devServer:
+  enabled: true
+  port: 3000
+  host: localhost
+  hot: true
+  liveReload: true
+  overlay: true
+  historyApiFallback: true
+  contentBase: ./src/renderer
+  watchContentBase: true
+  publicPath: /
+
+# Bundle analyzer
+bundleAnalyzer:
+  enabled: true
+  analyzerMode: static
+  reportFilename: report.html
+  openAnalyzer: true
+  generateStatsFile: true
+  statsFilename: stats.json
+  statsOptions: null
+  logLevel: info
+
+# Performance budget
+performance:
+  hints: warning
+  maxEntrypointSize: 5120000
+  maxAssetSize: 5120000
+  assetFilter: function(assetFilename) {
+    return assetFilename.endsWith('.js');
+  }
