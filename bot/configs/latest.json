@@ -1,43 +1,35 @@
 {
   "version": "1.0.0",
-  "timestamp": "2024-01-20T12:00:00Z",
-  "expires": "2024-01-21T12:00:00Z",
-  "signature": "sha256-generated-signature-here",
+  "timestamp": "2024-01-15T12:00:00Z",
   "servers": [
     {
-      "id": "server-ke-01",
+      "id": "kenya-1",
       "name": "Kenya Server",
-      "host": "your-kenya-server-ip",
+      "host": "server1.kenya.chaguo.tz",
       "port": 443,
       "protocol": "v2ray-ws",
-      "protocols": ["v2ray-ws", "shadowsocks"],
       "region": "ke",
-      "country": "Kenya",
       "config": {
-        "userId": "generate-with-uuid",
+        "userId": "b831381d-6324-4d53-ad4f-8cda48b30811",
         "alterId": 0,
         "security": "auto",
         "network": "ws",
-        "path": "/video",
-        "headers": {
-          "Host": "cdn.cloudflare.com"
-        }
+        "path": "/ws",
+        "host": "www.cloudflare.com"
       }
     },
     {
-      "id": "server-sa-01",
+      "id": "south-africa-1",
       "name": "South Africa Server",
-      "host": "your-sa-server-ip",
+      "host": "server1.sa.chaguo.tz",
       "port": 8388,
       "protocol": "shadowsocks",
-      "protocols": ["shadowsocks"],
       "region": "za",
-      "country": "South Africa",
       "config": {
         "method": "chacha20-ietf-poly1305",
-        "password": "generate-secure-password",
+        "password": "chaguo-tz-2024",
         "plugin": "obfs-local",
-        "plugin_opts": "obfs=http;obfs-host=www.bing.com"
+        "plugin_opts": "obfs=http"
       }
     }
   ]
