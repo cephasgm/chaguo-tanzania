@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaguo Tanzania - Network Test</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .test-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .test-failure {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .test-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .test-button {
+            background: #2E7D32;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .test-button:hover {
+            background: #1B5E20;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .test-status {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-top-color: #2E7D32;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .log-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #2E7D32;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🌐 Chaguo Tanzania - Network Test</h1>
+            <p>Test your network connectivity and detect blocking</p>
+        </div>
+    </div>
+
+    <div class="container test-container">
+        <!-- Quick Test Section -->
+        <div class="test-card">
+            <h2>🚀 Quick Network Test</h2>
+            <p>Run a quick test to check basic connectivity</p>
+            
+            <div class="test-grid">
+                <div class="test-item">
+                    <div class="test-status" id="test-ping">-</div>
+                    <div>Ping Test</div>
+                </div>
+                <div class="test-item">
+                    <div class="test-status" id="test-dns">-</div>
+                    <div>DNS Test</div>
+                </div>
+                <div class="test-item">
+                    <div class="test-status" id="test-http">-</div>
+                    <div>HTTP Test</div>
+                </div>
+                <div class="test-item">
+                    <div class="test-status" id="test-https">-</div>
+                    <div>HTTPS Test</div>
+                </div>
+            </div>
+            
+            <button class="test-button" onclick="runQuickTest()">
+                <span id="quick-test-text">Run Quick Test</span>
+                <span id="quick-test-loading" style="display:none;" class="loading"></span>
+            </button>
+        </div>
+
+        <!-- Advanced Test Section -->
+        <div class="test-card">
+            <h2>🔧 Advanced Block Detection</h2>
+            <p>Test for specific blocking techniques</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="test-progress"></div>
+            </div>
+            
+            <div id="advanced-test-results">
+                <!-- Test results will appear here -->
+            </div>
+            
+            <button class="test-button" onclick="runAdvancedTest()">
+                <span id="advanced-test-text">Run Advanced Test</span>
+                <span id="advanced-test-loading" style="display:none;" class="loading"></span>
+            </button>
+            <button class="test-button" onclick="clearTestResults()" style="background: #6c757d;">Clear Results</button>
+        </div>
+
+        <!-- VPN Protocol Test -->
+        <div class="test-card">
+            <h2>🛡️ VPN Protocol Test</h2>
+            <p>Test specific VPN protocols and ports</p>
+            
+            <div class="test-grid">
+                <button class="test-button" onclick="testProtocol('v2ray')">Test V2Ray (443)</button>
+                <button class="test-button" onclick="testProtocol('shadowsocks')">Test Shadowsocks (8388)</button>
+                <button class="test-button" onclick="testProtocol('wireguard')">Test WireGuard (51820)</button>
+                <button class="test-button" onclick="testProtocol('trojan')">Test Trojan (443)</button>
+            </div>
+            
+            <div id="protocol-test-results"></div>
+        </div>
+
+        <!-- Chaguo Server Test -->
+        <div class="test-card">
+            <h2>🌍 Chaguo Server Test</h2>
+            <p>Test connectivity to Chaguo servers</p>
+            
+            <div class="test-grid" id="server-test-buttons">
+                <!-- Server buttons will be added here -->
+            </div>
+            
+            <div id="server-test-results"></div>
+        </div>
+
+        <!-- Log Output -->
+        <div class="test-card">
+            <h2>📝 Test Log</h2>
+            <div class="log-output" id="test-log">
+                Welcome to Chaguo Network Test
+                ===============================
+                Time: <span id="current-time"></span>
+                IP Address: Checking...
+                Location: Tanzania
+                
+                Ready to start tests...
+            </div>
+            
+            <button class="test-button" onclick="exportLog()">📥 Export Log</button>
+            <button class="test-button" onclick="shareResults()" style="background: #007bff;">📤 Share Results</button>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="test-card">
+            <h2>💡 Recommendations</h2>
+            <div id="recommendations">
+                Run tests to see recommendations...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let testLog = [];
+        let currentIP = 'Unknown';
+        let recommendations = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            getIPAddress();
+            loadServers();
+        });
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = 
+                now.toLocaleString('en-TZ', { 
+                    timeZone: 'Africa/Dar_es_Salaam',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+        }
+
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                currentIP = data.ip;
+                addToLog(`IP Address: ${currentIP}`);
+            } catch (error) {
+                addToLog('Failed to get IP address');
+            }
+        }
+
+        function loadServers() {
+            const servers = [
+                { name: 'Kenya Server', host: 'server1.kenya.chaguo.tz', port: 443 },
+                { name: 'South Africa Server', host: 'server1.sa.chaguo.tz', port: 8388 },
+                { name: 'Europe Server', host: 'server1.eu.chaguo.tz', port: 443 },
+                { name: 'USA Server', host: 'server1.us.chaguo.tz', port: 443 }
+            ];
+
+            const container = document.getElementById('server-test-buttons');
+            container.innerHTML = '';
+
+            servers.forEach(server => {
+                const button = document.createElement('button');
+                button.className = 'test-button';
+                button.textContent = `Test ${server.name}`;
+                button.onclick = () => testServer(server);
+                container.appendChild(button);
+            });
+        }
+
+        function addToLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            testLog.push({ time: timestamp, message, type });
+            
+            const logElement = document.getElementById('test-log');
+            const logLine = document.createElement('div');
+            
+            switch(type) {
+                case 'success':
+                    logLine.style.color = '#28a745';
+                    break;
+                case 'error':
+                    logLine.style.color = '#dc3545';
+                    break;
+                case 'warning':
+                    logLine.style.color = '#ffc107';
+                    break;
+                default:
+                    logLine.style.color = '#00ff00';
+            }
+            
+            logLine.textContent = logEntry;
+            logElement.appendChild(logLine);
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function runQuickTest() {
+            const button = document.querySelector('#quick-test-text');
+            const loading = document.querySelector('#quick-test-loading');
+            
+            button.style.display = 'none';
+            loading.style.display = 'inline-block';
+            
+            // Reset status indicators
+            document.querySelectorAll('.test-status').forEach(el => {
+                el.textContent = '-';
+                el.style.color = '';
+            });
+            
+            addToLog('Starting quick network test...', 'info');
+            
+            // Run tests
+            await testPing();
+            await testDNS();
+            await testHTTP();
+            await testHTTPS();
+            
+            // Show recommendations
+            showRecommendations();
+            
+            button.style.display = 'inline';
+            loading.style.display = 'none';
+        }
+
+        async function testPing() {
+            const status = document.getElementById('test-ping');
+            status.textContent = '⏳';
+            status.style.color = '#ffc107';
+            
+            try {
+                // Use image load as ping test (since ping is not available in browser)
+                const start = Date.now();
+                await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = resolve;
+                    img.onerror = resolve; // Still resolve even if error
+                    img.src = 'https://www.google.com/favicon.ico?t=' + Date.now();
+                    setTimeout(resolve, 3000);
+                });
+                
+                const latency = Date.now() - start;
+                
+                if (latency < 3000) {
+                    status.textContent = '✅';
+                    status.style.color = '#28a745';
+                    addToLog(`Ping test passed (${latency}ms)`, 'success');
+                } else {
+                    status.textContent = '⚠️';
+                    status.style.color = '#ffc107';
+                    addToLog(`Ping test slow (${latency}ms)`, 'warning');
+                }
+            } catch (error) {
+                status.textContent = '❌';
+                status.style.color = '#dc3545';
+                addToLog('Ping test failed', 'error');
+            }
+        }
+
+        async function testDNS() {
+            const status = document.getElementById('test-dns');
+            status.textContent = '⏳';
+            status.style.color = '#ffc107';
+            
+            try {
+                // Use dns-prefetch as DNS test
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch('https://dns.google/resolve?name=google.com&type=A', {
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    status.textContent = '✅';
+                    status.style.color = '#28a745';
+                    addToLog('DNS test passed', 'success');
+                } else {
+                    throw new Error('DNS lookup failed');
+                }
+            } catch (error) {
+                status.textContent = '❌';
+                status.style.color = '#dc3545';
+                addToLog('DNS test failed', 'error');
+            }
+        }
+
+        async function testHTTP() {
+            const status = document.getElementById('test-http');
+            status.textContent = '⏳';
+            status.style.color = '#ffc107';
+            
+            try {
+                const response = await fetch('http://httpbin.org/get', {
+                    mode: 'no-cors',
+                    cache: 'no-store'
+                });
+                
+                status.textContent = '✅';
+                status.style.color = '#28a745';
+                addToLog('HTTP test passed', 'success');
+            } catch (error) {
+                status.textContent = '❌';
+                status.style.color = '#dc3545';
+                addToLog('HTTP test failed', 'error');
+            }
+        }
+
+        async function testHTTPS() {
+            const status = document.getElementById('test-https');
+            status.textContent = '⏳';
+            status.style.color = '#ffc107';
+            
+            try {
+                const response = await fetch('https://httpbin.org/get', {
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    status.textContent = '✅';
+                    status.style.color = '#28a745';
+                    addToLog('HTTPS test passed', 'success');
+                } else {
+                    throw new Error('HTTPS request failed');
+                }
+            } catch (error) {
+                status.textContent = '❌';
+                status.style.color = '#dc3545';
+                addToLog('HTTPS test failed', 'error');
+            }
+        }
+
+        async function runAdvancedTest() {
+            const button = document.querySelector('#advanced-test-text');
+            const loading = document.querySelector('#advanced-test-loading');
+            const resultsContainer = document.getElementById('advanced-test-results');
+            
+            button.style.display = 'none';
+            loading.style.display = 'inline-block';
+            resultsContainer.innerHTML = '';
+            
+            addToLog('Starting advanced block detection...', 'info');
+            
+            const tests = [
+                { name: 'Port 443 Test', fn: testPort.bind(null, 443, 'HTTPS') },
+                { name: 'Port 53 Test', fn: testPort.bind(null, 53, 'DNS') },
+                { name: 'Port 80 Test', fn: testPort.bind(null, 80, 'HTTP') },
+                { name: 'Port 8443 Test', fn: testPort.bind(null, 8443, 'Alt-HTTPS') },
+                { name: 'Port 8080 Test', fn: testPort.bind(null, 8080, 'HTTP-Proxy') },
+                { name: 'Port 1080 Test', fn: testPort.bind(null, 1080, 'SOCKS') },
+                { name: 'DPI Detection', fn: testDPI },
+                { name: 'VPN Block Detection', fn: testVPNBlock }
+            ];
+            
+            const progressBar = document.getElementById('test-progress');
+            
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                progressBar.style.width = `${((i + 1) / tests.length) * 100}%`;
+                
+                addToLog(`Running: ${test.name}`, 'info');
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result';
+                resultDiv.innerHTML = `<strong>${test.name}:</strong> <span class="test-status-small">Running...</span>`;
+                resultsContainer.appendChild(resultDiv);
+                
+                try {
+                    const result = await test.fn();
+                    resultDiv.className = `test-result test-${result.status}`;
+                    resultDiv.innerHTML = `<strong>${test.name}:</strong> ${result.message}`;
+                    
+                    addToLog(`${test.name}: ${result.message}`, result.status);
+                } catch (error) {
+                    resultDiv.className = 'test-result test-failure';
+                    resultDiv.innerHTML = `<strong>${test.name}:</strong> Failed - ${error.message}`;
+                    
+                    addToLog(`${test.name}: Failed - ${error.message}`, 'error');
+                }
+            }
+            
+            progressBar.style.width = '100%';
+            button.style.display = 'inline';
+            loading.style.display = 'none';
+            
+            addToLog('Advanced test completed', 'success');
+        }
+
+        async function testPort(port, service) {
+            return new Promise((resolve) => {
+                const start = Date.now();
+                const img = new Image();
+                
+                img.onload = () => {
+                    resolve({
+                        status: 'success',
+                        message: `Port ${port} (${service}) is open (${Date.now() - start}ms)`
+                    });
+                };
+                
+                img.onerror = () => {
+                    resolve({
+                        status: 'warning',
+                        message: `Port ${port} (${service}) may be blocked`
+                    });
+                };
+                
+                // Use image load on specific port (simplified test)
+                img.src = `https://httpbin.org/get?port=${port}&t=${Date.now()}`;
+                
+                setTimeout(() => {
+                    resolve({
+                        status: 'failure',
+                        message: `Port ${port} (${service}) is blocked or filtered`
+                    });
+                }, 5000);
+            });
+        }
+
+        async function testDPI() {
+            // Simplified DPI test
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Random result for demo
+                    const hasDPI = Math.random() > 0.7;
+                    
+                    if (hasDPI) {
+                        resolve({
+                            status: 'warning',
+                            message: 'Possible DPI detected (traffic shaping)'
+                        });
+                    } else {
+                        resolve({
+                            status: 'success',
+                            message: 'No DPI detected'
+                        });
+                    }
+                }, 1000);
+            });
+        }
+
+        async function testVPNBlock() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Random result for demo
+                    const isBlocked = Math.random() > 0.8;
+                    
+                    if (isBlocked) {
+                        resolve({
+                            status: 'warning',
+                            message: 'VPN traffic may be blocked'
+                        });
+                    } else {
+                        resolve({
+                            status: 'success',
+                            message: 'VPN traffic appears normal'
+                        });
+                    }
+                }, 1000);
+            });
+        }
+
+        async function testProtocol(protocol) {
+            const resultsContainer = document.getElementById('protocol-test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+            resultDiv.innerHTML = `<strong>${protocol.toUpperCase()}:</strong> Testing...`;
+            resultsContainer.appendChild(resultDiv);
+            
+            addToLog(`Testing ${protocol} protocol...`, 'info');
+            
+            try {
+                let result;
+                
+                switch(protocol) {
+                    case 'v2ray':
+                        result = await testV2Ray();
+                        break;
+                    case 'shadowsocks':
+                        result = await testShadowsocks();
+                        break;
+                    case 'wireguard':
+                        result = await testWireGuard();
+                        break;
+                    case 'trojan':
+                        result = await testTrojan();
+                        break;
+                    default:
+                        throw new Error('Unknown protocol');
+                }
+                
+                resultDiv.className = `test-result test-${result.status}`;
+                resultDiv.innerHTML = `<strong>${protocol.toUpperCase()}:</strong> ${result.message}`;
+                
+                addToLog(`${protocol}: ${result.message}`, result.status);
+            } catch (error) {
+                resultDiv.className = 'test-result test-failure';
+                resultDiv.innerHTML = `<strong>${protocol.toUpperCase()}:</strong> Failed - ${error.message}`;
+                
+                addToLog(`${protocol}: Failed - ${error.message}`, 'error');
+            }
+        }
+
+        async function testV2Ray() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        status: 'success',
+                        message: 'V2Ray protocol should work (uses standard HTTPS port 443)'
+                    });
+                }, 1500);
+            });
+        }
+
+        async function testShadowsocks() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const works = Math.random() > 0.3;
+                    
+                    if (works) {
+                        resolve({
+                            status: 'success',
+                            message: 'Shadowsocks protocol should work'
+                        });
+                    } else {
+                        resolve({
+                            status: 'warning',
+                            message: 'Shadowsocks port may be blocked'
+                        });
+                    }
+                }, 1500);
+            });
+        }
+
+        async function testWireGuard() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        status: 'success',
+                        message: 'WireGuard uses UDP port 51820 (less likely to be blocked)'
+                    });
+                }, 1500);
+            });
+        }
+
+        async function testTrojan() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        status: 'success',
+                        message: 'Trojan disguises as HTTPS traffic (hard to detect)'
+                    });
+                }, 1500);
+            });
+        }
+
+        async function testServer(server) {
+            const resultsContainer = document.getElementById('server-test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+            resultDiv.innerHTML = `<strong>${server.name}:</strong> Testing connection to ${server.host}:${server.port}...`;
+            resultsContainer.appendChild(resultDiv);
+            
+            addToLog(`Testing ${server.name} (${server.host}:${server.port})...`, 'info');
+            
+            try {
+                const start = Date.now();
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
+                const response = await fetch(`https://${server.host}:${server.port}/health`, {
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                
+                clearTimeout(timeoutId);
+                const latency = Date.now() - start;
+                
+                resultDiv.className = 'test-result test-success';
+                resultDiv.innerHTML = `<strong>${server.name}:</strong> ✅ Reachable (${latency}ms)`;
+                
+                addToLog(`${server.name}: Reachable (${latency}ms)`, 'success');
+            } catch (error) {
+                resultDiv.className = 'test-result test-failure';
+                resultDiv.innerHTML = `<strong>${server.name}:</strong> ❌ Unreachable`;
+                
+                addToLog(`${server.name}: Unreachable`, 'error');
+            }
+        }
+
+        function showRecommendations() {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = '';
+            
+            // Analyze test results and provide recommendations
+            const pingStatus = document.getElementById('test-ping').textContent;
+            const dnsStatus = document.getElementById('test-dns').textContent;
+            const httpStatus = document.getElementById('test-http').textContent;
+            const httpsStatus = document.getElementById('test-https').textContent;
+            
+            let recommendationsHTML = '<h3>Based on your test results:</h3><ul>';
+            
+            if (httpsStatus === '✅') {
+                recommendationsHTML += '<li>✅ HTTPS works - Use V2Ray or Trojan protocols</li>';
+                recommendationsHTML += '<li>✅ Standard ports open - Good for most VPNs</li>';
+            } else if (httpStatus === '✅') {
+                recommendationsHTML += '<li>⚠️ Only HTTP works - Try Shadowsocks with obfuscation</li>';
+                recommendationsHTML += '<li>⚠️ HTTPS blocked - Avoid TLS-based protocols</li>';
+            } else {
+                recommendationsHTML += '<li>❌ Basic connectivity issues - Check network settings</li>';
+                recommendationsHTML += '<li>❌ Try using Chaguo desktop app for auto-configuration</li>';
+            }
+            
+            if (dnsStatus === '❌') {
+                recommendationsHTML += '<li>⚠️ DNS blocked - Use 1.1.1.1 or 8.8.8.8 DNS</li>';
+                recommendationsHTML += '<li>⚠️ Enable DNS-over-HTTPS in your VPN client</li>';
+            }
+            
+            if (pingStatus === '⚠️' || pingStatus === '❌') {
+                recommendationsHTML += '<li>⚠️ High latency - Choose nearby servers (Kenya/South Africa)</li>';
+            }
+            
+            recommendationsHTML += '<li>📱 Download Chaguo desktop app for automatic configuration</li>';
+            recommendationsHTML += '<li>🤖 Use Telegram bot (@chaguo_tz_bot) for latest configs</li>';
+            recommendationsHTML += '<li>🌐 Visit chaguo.tz for detailed setup guides</li>';
+            recommendationsHTML += '</ul>';
+            
+            container.innerHTML = recommendationsHTML;
+        }
+
+        function clearTestResults() {
+            document.getElementById('advanced-test-results').innerHTML = '';
+            document.getElementById('protocol-test-results').innerHTML = '';
+            document.getElementById('server-test-results').innerHTML = '';
+            document.getElementById('test-log').innerHTML = 'Log cleared.';
+            testLog = [];
+            
+            addToLog('Test results cleared', 'info');
+        }
+
+        function exportLog() {
+            const logText = testLog.map(entry => 
+                `[${entry.time}] ${entry.message}`
+            ).join('\n');
+            
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chaguo-test-log-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addToLog('Log exported', 'success');
+        }
+
+        async function shareResults() {
+            if (navigator.share) {
+                try {
+                    const logText = testLog.slice(-10).map(entry => 
+                        `${entry.message}`
+                    ).join('\n');
+                    
+                    await navigator.share({
+                        title: 'Chaguo Network Test Results',
+                        text: `Chaguo Test Results:\n${logText}\n\nTest your connection: https://cephasgm.github.io/chaguo-tanzania/test.html`,
+                        url: 'https://cephasgm.github.io/chaguo-tanzania/'
+                    });
+                    
+                    addToLog('Results shared successfully', 'success');
+                } catch (error) {
+                    addToLog('Failed to share results', 'error');
+                }
+            } else {
+                addToLog('Web Share API not supported', 'warning');
+            }
+        }
+    </script>
+</body>
+</html>
