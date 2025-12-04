@@ -8,10 +8,13 @@ class ChaguoApp {
 
     init() {
         console.log('Chaguo App Initializing...');
+        
+        // Remove PWA setup for now to avoid errors
         this.bindEvents();
         this.generateQRCode();
-        this.setupPWA();
         this.loadMethods();
+        
+        console.log('✅ App initialized successfully');
     }
 
     bindEvents() {
