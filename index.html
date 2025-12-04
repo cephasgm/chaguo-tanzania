@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chaguo - Internet Freedom for Tanzania</title>
+    <meta name="description" content="Open-source toolkit to bypass internet restrictions in Tanzania">
+    <meta name="theme-color" content="#2E7D32">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" href="/icons/icon-72x72.png" type="image/png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button id="lang-en" class="lang-btn active">English</button>
+        <button id="lang-sw" class="lang-btn">Kiswahili</button>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 id="title">Chaguo - Your Choice for Internet Freedom</h1>
+            <p id="subtitle">Open-source tools to bypass internet restrictions in Tanzania</p>
+            
+            <!-- Connection Status -->
+            <div class="status-card" id="connection-status">
+                <div class="status-indicator disconnected"></div>
+                <span id="status-text">Checking network...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- QR Code Generator -->
+        <section class="card qr-section">
+            <h2 id="qr-title">📱 One-Click Setup</h2>
+            <p id="qr-description">Scan QR code to import configuration directly to your VPN client</p>
+            
+            <div class="qr-container">
+                <div id="qrcode"></div>
+                <div class="qr-controls">
+                    <button id="generate-qr" class="btn primary">
+                        🔄 Generate New Config
+                    </button>
+                    <button id="download-qr" class="btn secondary">
+                        💾 Download QR Code
+                    </button>
+                    <button id="share-qr" class="btn secondary" style="display: none;">
+                        📤 Share
+                    </button>
+                </div>
+                <div class="qr-info">
+                    <p id="qr-expiry">Config expires in: <span id="expiry-time">24:00:00</span></p>
+                    <p id="qr-protocol">Protocol: <span id="protocol-name">Auto-select</span></p>
+                </div>
+            </div>
+            
+            <!-- Manual Config -->
+            <div class="manual-config">
+                <h3>📝 Manual Configuration</h3>
+                <textarea id="config-text" class="config-textarea" readonly></textarea>
+                <button id="copy-config" class="btn secondary">📋 Copy Config</button>
+                <button id="download-config" class="btn secondary">⬇️ Download Config</button>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section class="card">
+            <h2 id="download-title">⬇️ Download Chaguo Toolkit</h2>
+            <p id="download-desc">Available for all platforms</p>
+            
+            <div class="download-grid">
+                <a href="desktop-app/" class="download-card">
+                    <div class="download-icon">💻</div>
+                    <h3>Desktop App</h3>
+                    <p>Windows, macOS, Linux</p>
+                    <small>One-click connect</small>
+                </a>
+                
+                <a href="https://github.com/cephasgm/chaguo-tanzania/releases" class="download-card">
+                    <div class="download-icon">📱</div>
+                    <h3>Mobile Configs</h3>
+                    <p>Android & iOS</p>
+                    <small>Import to your client</small>
+                </a>
+                
+                <a href="#cli-tools" class="download-card">
+                    <div class="download-icon">⚡</div>
+                    <h3>CLI Tools</h3>
+                    <p>For advanced users</p>
+                    <small>Terminal-based</small>
+                </a>
+            </div>
+        </section>
+
+        <!-- Methods Section -->
+        <section class="card">
+            <h2 id="methods-title">🛡️ Working Methods</h2>
+            <div id="methods-list" class="methods-grid">
+                <!-- Dynamically loaded -->
+            </div>
+        </section>
+
+        <!-- Telegram Bot -->
+        <section class="card telegram-section">
+            <h2>🤖 Telegram Bot</h2>
+            <p>Get latest configurations and updates via Telegram</p>
+            <a href="https://t.me/chaguo_tz_bot" class="telegram-link" target="_blank">
+                <div class="telegram-icon">✈️</div>
+                <div>
+                    <h3>@chaguo_tz_bot</h3>
+                    <p>Click to start conversation</p>
+                </div>
+            </a>
+            <div class="telegram-features">
+                <span>✓ Auto-config updates</span>
+                <span>✓ Server status</span>
+                <span>✓ Community support</span>
+            </div>
+        </section>
+
+        <!-- Emergency Section -->
+        <section class="card emergency">
+            <h2>🚨 Emergency Access</h2>
+            <p>If nothing works, try these fallback methods:</p>
+            <div class="emergency-grid">
+                <button id="emergency-sms" class="emergency-btn">
+                    📱 Get config via SMS
+                </button>
+                <button id="mesh-discover" class="emergency-btn">
+                    📶 Discover nearby devices
+                </button>
+                <button id="offline-mode" class="emergency-btn">
+                    💾 Use offline cache
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Chaguo Tanzania</h3>
+                    <p>Internet freedom toolkit</p>
+                    <p>Made with ❤️ for Tanzania</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <a href="#" id="tos-link">Terms of Service</a>
+                    <a href="#" id="privacy-link">Privacy Policy</a>
+                    <p><small>For educational purposes only</small></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <p>GitHub: <a href="https://github.com/cephasgm/chaguo-tanzania">cephasgm/chaguo-tanzania</a></p>
+                    <p>Email: contact@chaguo.tz</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 Chaguo Tanzania. MIT License.</p>
+                <p id="pwa-status">📲 Install as PWA: <button id="install-pwa">Install Now</button></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script src="qr-generator.js"></script>
+    <script src="pwa-manager.js"></script>
+    <script src="config-distributor.js"></script>
+</body>
+</html>
