@@ -1,40 +1,66 @@
-name: Deploy to GitHub Pages
+name: Build Desktop App
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: desktop-app/package-lock.json
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: '.'
+    - name: Install dependencies
+      run: npm ci
+      working-directory: desktop-app
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    - name: Build
+      run: npm run build
+      working-directory: desktop-app
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: chaguo-${{ matrix.os }}
+        path: |
+          desktop-app/dist/*.exe
+          desktop-app/dist/*.dmg
+          desktop-app/dist/*.AppImage
+          desktop-app/dist/*.deb
+          desktop-app/dist/*.rpm
+        if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          chaguo-ubuntu-latest/*
+          chaguo-macos-latest/*
+          chaguo-windows-latest/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
