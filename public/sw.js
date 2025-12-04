@@ -1,24 +1,26 @@
-// sw.js - SIMPLIFIED WORKING VERSION
-const CACHE_NAME = 'chaguo-cache-v1';
-const CACHE_URLS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json'
+// Service Worker for Chaguo
+const CACHE_NAME = 'chaguo-v1';
+const urlsToCache = [
+  '/chaguo-tanzania/',
+  '/chaguo-tanzania/index.html',
+  '/chaguo-tanzania/style.css',
+  '/chaguo-tanzania/app.js',
+  '/chaguo-tanzania/manifest.json'
 ];
 
+// Install event
 self.addEventListener('install', event => {
-  console.log('[Service Worker] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CACHE_URLS))
-      .then(() => self.skipWaiting())
+      .then(cache => {
+        console.log('Caching app shell');
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
+// Activate event
 self.addEventListener('activate', event => {
-  console.log('[Service Worker] Activating...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -28,15 +30,19 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
   );
 });
 
+// Fetch event
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        return response || fetch(event.request);
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
       })
   );
 });
