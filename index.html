@@ -7,16 +7,6 @@
     <meta name="description" content="Open-source toolkit to bypass internet restrictions in Tanzania">
     <meta name="theme-color" content="#2E7D32">
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-
-    <!-- Icons -->
-    <link rel="icon" href="/icons/icon-72x72.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
-
     <!-- Add this to fix PWA registration -->
     <script>
       if ('serviceWorker' in navigator) {
@@ -32,8 +22,18 @@
       }
     </script>
 
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" href="/icons/icon-72x72.png" type="image/png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- QR Code Library (Corrected CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/qrcode.min.js"></script>
 
     <!-- Updated Service Worker Registration -->
     <script>
@@ -201,7 +201,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>© 2024 Chaguo Tanzania. MIT License.</p>
+                <p>© 2025 Chaguo Tanzania. MIT License.</p>
             </div>
         </div>
     </footer>
