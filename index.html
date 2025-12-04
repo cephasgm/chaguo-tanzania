@@ -2,60 +2,46 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chaguo - Internet Freedom for Tanzania</title>
     <meta name="description" content="Open-source toolkit to bypass internet restrictions in Tanzania">
     <meta name="theme-color" content="#2E7D32">
-
-    <!-- Add this to fix PWA registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-              console.log('ServiceWorker registration successful');
-            })
-            .catch(function(err) {
-              console.log('ServiceWorker registration failed: ', err);
-            });
-        });
-      }
-    </script>
-
+    
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-
-    <!-- Icons -->
-    <link rel="icon" href="/icons/icon-72x72.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-
+    <link rel="manifest" href="manifest.json">
+    
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- QR Code Library (Corrected CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/qrcode.min.js"></script>
-
-    <!-- Updated Service Worker Registration -->
+    
+    <!-- QR Code Library -->
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- PWA Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js', { scope: './' })
+                navigator.serviceWorker.register('sw.js')
                     .then(registration => {
-                        console.log('SW registered: ', registration.scope);
+                        console.log('Service Worker registered:', registration.scope);
                     })
                     .catch(error => {
-                        console.log('SW registration failed: ', error);
+                        console.log('Service Worker registration failed:', error);
                     });
             });
         }
     </script>
+    
+    <!-- PWA Install Prompt -->
+    <script>
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('PWA install available');
+        });
+    </script>
 </head>
 <body>
-    <!-- PWA Install Button (Top Left) -->
-    <div class="pwa-install-top">
-        <p>📲 Install as PWA: <button id="install-pwa">Install Now</button></p>
-    </div>
-
     <!-- Language Switcher -->
     <div class="language-switcher">
         <button id="lang-en" class="lang-btn active">English</button>
@@ -67,12 +53,6 @@
         <div class="container">
             <h1 id="title">Chaguo - Your Choice for Internet Freedom</h1>
             <p id="subtitle">Open-source tools to bypass internet restrictions in Tanzania</p>
-
-            <!-- Connection Status -->
-            <div class="status-card" id="connection-status">
-                <div class="status-indicator disconnected"></div>
-                <span id="status-text">Checking network...</span>
-            </div>
         </div>
     </header>
 
@@ -80,22 +60,25 @@
     <main class="container">
         <!-- QR Code Generator -->
         <section class="card qr-section">
-            <h2 id="qr-title">📱 One-Click Setup</h2>
-            <p id="qr-description">Scan QR code to import configuration directly to your VPN client</p>
-
+            <h2>📱 One-Click Setup</h2>
+            <p>Scan QR code to import configuration directly to your VPN client</p>
+            
             <div class="qr-container">
                 <div id="qrcode"></div>
                 <div class="qr-controls">
-                    <button id="generate-qr" class="btn primary">🔄 Generate New Config</button>
-                    <button id="download-qr" class="btn secondary">💾 Download QR Code</button>
-                    <button id="share-qr" class="btn secondary" style="display: none;">📤 Share</button>
+                    <button id="generate-qr" class="btn primary">
+                        🔄 Generate New Config
+                    </button>
+                    <button id="download-qr" class="btn secondary">
+                        💾 Download QR Code
+                    </button>
                 </div>
                 <div class="qr-info">
-                    <p id="qr-expiry">Config expires in: <span id="expiry-time">24:00:00</span></p>
-                    <p id="qr-protocol">Protocol: <span id="protocol-name">Auto-select</span></p>
+                    <p>Config expires in: <span id="expiry-time">24:00:00</span></p>
+                    <p>Protocol: <span id="protocol-name">V2Ray + WebSocket</span></p>
                 </div>
             </div>
-
+            
             <!-- Manual Config -->
             <div class="manual-config">
                 <h3>📝 Manual Configuration</h3>
@@ -107,9 +90,9 @@
 
         <!-- Download Section -->
         <section class="card">
-            <h2 id="download-title">⬇️ Download Chaguo Toolkit</h2>
-            <p id="download-desc">Available for all platforms</p>
-
+            <h2>⬇️ Download Chaguo Toolkit</h2>
+            <p>Available for all platforms</p>
+            
             <div class="download-grid">
                 <a href="desktop-app/" class="download-card">
                     <div class="download-icon">💻</div>
@@ -117,14 +100,14 @@
                     <p>Windows, macOS, Linux</p>
                     <small>One-click connect</small>
                 </a>
-
-                <a href="https://github.com/cephasgm/chaguo-tanzania/releases" class="download-card">
+                
+                <a href="https://github.com/cephasgm/chaguo-tanzania" class="download-card" target="_blank">
                     <div class="download-icon">📱</div>
                     <h3>Mobile Configs</h3>
                     <p>Android & iOS</p>
                     <small>Import to your client</small>
                 </a>
-
+                
                 <a href="#cli-tools" class="download-card">
                     <div class="download-icon">⚡</div>
                     <h3>CLI Tools</h3>
@@ -136,8 +119,24 @@
 
         <!-- Methods Section -->
         <section class="card">
-            <h2 id="methods-title">🛡️ Working Methods</h2>
-            <div id="methods-list" class="methods-grid"></div>
+            <h2>🛡️ Working Methods</h2>
+            <div id="methods-list" class="methods-grid">
+                <div class="method-card">
+                    <h4>V2Ray + WebSocket</h4>
+                    <p>Uses WebSocket with TLS encryption to bypass DPI</p>
+                    <small>Last tested: Today</small>
+                </div>
+                <div class="method-card">
+                    <h4>Shadowsocks + Obfs</h4>
+                    <p>Lightweight proxy with traffic obfuscation</p>
+                    <small>Last tested: Today</small>
+                </div>
+                <div class="method-card">
+                    <h4>WireGuard</h4>
+                    <p>Modern VPN protocol with better performance</p>
+                    <small>Last tested: Today</small>
+                </div>
+            </div>
         </section>
 
         <!-- Telegram Bot -->
@@ -151,65 +150,19 @@
                     <p>Click to start conversation</p>
                 </div>
             </a>
-            <div class="telegram-features">
-                <span>✓ Auto-config updates</span>
-                <span>✓ Server status</span>
-                <span>✓ Community support</span>
-            </div>
-        </section>
-
-        <!-- Emergency Section -->
-        <section class="card emergency">
-            <h2>🚨 Emergency Access</h2>
-            <p>If nothing works, try these fallback methods:</p>
-            <div class="emergency-grid">
-                <button id="emergency-sms" class="emergency-btn">📱 Get config via SMS</button>
-                <button id="mesh-discover" class="emergency-btn">📶 Discover nearby devices</button>
-                <button id="offline-mode" class="emergency-btn">💾 Use offline cache</button>
-            </div>
         </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Chaguo Tanzania</h3>
-                    <p>Internet freedom toolkit</p>
-                    <p>Made with ❤️ for Tanzania</p>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <a href="#" id="tos-link">Terms of Service</a>
-                    <a href="#" id="privacy-link">Privacy Policy</a>
-                    <p><small>For educational purposes only</small></p>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Connect</h3>
-                    <p>GitHub: <a href="https://github.com/cephasgm/chaguo-tanzania">cephasgm/chaguo-tanzania</a></p>
-                    <p>Email: contact@chaguo.tz</p>
-                </div>
-            </div>
-
-            <div class="legal">
-              <p><strong>Disclaimer:</strong> Chaguo is provided for educational and research purposes only. Users are solely responsible for complying with all applicable laws in their jurisdiction. The developers assume no liability for misuse.</p>
-              <p><strong>No Warranty:</strong> This service is provided "as is" without any warranty of any kind, either expressed or implied.</p>
-              <p><strong>Data Collection:</strong> We collect minimal anonymous usage data to improve service quality. No personal identifying information is stored.</p>
-            </div>
-
-            <div class="footer-bottom">
-                <p>© 2025 Chaguo Tanzania. MIT License.</p>
-            </div>
+            <p>© 2024 Chaguo Tanzania. MIT License.</p>
+            <p>For educational purposes only.</p>
+            <button id="install-pwa" style="display:none; margin-top:10px;" class="btn primary">📲 Install as App</button>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- Main App Script -->
     <script src="app.js"></script>
-    <script src="qr-generator.js"></script>
-    <script src="pwa-manager.js"></script>
-    <script src="config-distributor.js"></script>
 </body>
 </html>
