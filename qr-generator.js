@@ -13,6 +13,54 @@ class QRGenerator {
         document.body.appendChild(this.canvas);
     }
 
+    // ================================
+    // FIX 2: REPLACED QR CODE FUNCTION
+    // ================================
+    async generateQRCode() {
+        try {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = ''; // Clear previous
+        
+            // Simple config for QR
+            const config = {
+                server: 'server1.kenya.chaguo.tz',
+                port: 443,
+                protocol: 'v2ray-ws',
+                userId: this.generateUUID(),
+                timestamp: Date.now(),
+                expires: Date.now() + 86400000 // 24 hours
+            };
+            
+            const configString = JSON.stringify(config, null, 2);
+            document.getElementById('config-text').value = configString;
+            
+            // Use simple QR code if library is available
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(qrContainer, {
+                    text: configString,
+                    width: 256,
+                    height: 256,
+                    colorDark: "#2E7D32",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } else {
+                // Fallback: Show config text
+                qrContainer.innerHTML = `
+                    <div style="padding: 20px; background: #f5f5f5; border-radius: 10px;">
+                        <p>QR library loading... Please copy config manually:</p>
+                        <textarea style="width:100%; height:100px;">${configString}</textarea>
+                    </div>
+                `;
+            }
+            
+        } catch (error) {
+            console.error('QR generation error:', error);
+        }
+    }
+    // ================================
+
+
     async generate(data, options = {}) {
         const defaultOptions = {
             width: 256,
@@ -36,7 +84,6 @@ class QRGenerator {
                     return;
                 }
                 
-                // Create image from canvas
                 const img = new Image();
                 img.src = this.canvas.toDataURL('image/png');
                 img.alt = 'Chaguo Configuration QR Code';
@@ -44,7 +91,6 @@ class QRGenerator {
                 qrContainer.appendChild(img);
                 this.currentQR = img.src;
                 
-                // Add click to enlarge
                 img.style.cursor = 'pointer';
                 img.addEventListener('click', () => this.enlargeQR(img.src));
                 
@@ -99,7 +145,6 @@ class QRGenerator {
     share() {
         if (!navigator.share || !this.currentQR) return false;
         
-        // Convert base64 to blob for sharing
         fetch(this.currentQR)
             .then(res => res.blob())
             .then(blob => {
@@ -116,7 +161,6 @@ class QRGenerator {
     }
 
     generateConfigQR(config) {
-        // Add metadata
         const qrData = {
             ...config,
             _meta: {
@@ -130,19 +174,16 @@ class QRGenerator {
         return this.generate(JSON.stringify(qrData));
     }
 
-    // Generate animated QR for large configs
     generateAnimatedQR(data, chunkSize = 500) {
         if (data.length <= chunkSize) {
             return this.generate(data);
         }
         
-        // Split data into chunks
         const chunks = [];
         for (let i = 0; i < data.length; i += chunkSize) {
             chunks.push(data.substring(i, i + chunkSize));
         }
         
-        // Generate QR for each chunk
         const qrContainer = document.getElementById('qrcode');
         qrContainer.innerHTML = '';
         
@@ -181,7 +222,6 @@ class QRGenerator {
         
         qrContainer.appendChild(container);
         
-        // Animate through chunks
         let currentIndex = 0;
         const canvases = container.querySelectorAll('canvas');
         
@@ -189,15 +229,12 @@ class QRGenerator {
             canvases.forEach((canvas, i) => {
                 canvas.style.opacity = i === currentIndex ? '1' : '0';
             });
-            
             currentIndex = (currentIndex + 1) % chunks.length;
         };
         
-        // Start animation
         animate();
-        const interval = setInterval(animate, 2000);
-        
-        // Stop on hover
+        let interval = setInterval(animate, 2000);
+
         container.addEventListener('mouseenter', () => clearInterval(interval));
         container.addEventListener('mouseleave', () => {
             interval = setInterval(animate, 2000);
@@ -208,6 +245,14 @@ class QRGenerator {
 
     generateChunkId() {
         return Math.random().toString(36).substring(2, 15);
+    }
+
+    generateUUID() {
+        return crypto.randomUUID ? crypto.randomUUID() : 
+               'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                   const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                   return v.toString(16);
+               });
     }
 }
 
