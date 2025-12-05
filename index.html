@@ -17,29 +17,50 @@
    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
     <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/chaguo-tanzania/sw.js')
-                    .then(function(registration) {
-                        console.log('✅ Service Worker registered with scope:', registration.scope);
-                    })
-                    .catch(function(err) {
-                        console.log('❌ Service Worker registration failed:', err);
+   <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swUrl = 'sw.js';
+            
+            navigator.serviceWorker.register(swUrl)
+                .then(registration => {
+                    console.log('✅ Service Worker registered:', registration.scope);
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        console.log('🔄 Service Worker update found');
                     });
-            });
-        }
-    </script>
-    
-    <!-- PWA Install Prompt -->
-    <script>
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('PWA install available');
+                })
+                .catch(error => {
+                    console.log('❌ Service Worker registration failed:', error);
+                });
         });
-    </script>
+    }
+    
+    // PWA install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('📱 PWA install available');
+        
+        // Show install button after 3 seconds
+        setTimeout(() => {
+            const installBtn = document.getElementById('install-pwa');
+            if (installBtn) {
+                installBtn.style.display = 'block';
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`User ${outcome} the install`);
+                        deferredPrompt = null;
+                    }
+                });
+            }
+        }, 3000);
+    });
+</script>
 </head>
 <body>
     <!-- Language Switcher -->
@@ -166,4 +187,5 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
