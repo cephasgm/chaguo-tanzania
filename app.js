@@ -36,52 +36,50 @@ class ChaguoApp {
     }
 
     generateQRCode() {
-        try {
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = '';
-            
-            // Generate config
-            this.currentConfig = {
-                server: "server1.kenya.chaguo.tz",
-                port: 443,
-                protocol: "v2ray-ws",
-                userId: this.generateUUID(),
-                alterId: 0,
-                security: "auto",
-                network: "ws",
-                path: "/ws",
-                host: "www.cloudflare.com",
-                timestamp: Date.now(),
-                expires: Date.now() + 86400000
-            };
-            
-            // Display config text
-            const configText = JSON.stringify(this.currentConfig, null, 2);
-            document.getElementById('config-text').value = configText;
-            
-            // Generate QR Code
-            if (typeof QRCode !== 'undefined') {
+    try {
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = '';
+        
+        // Generate config
+        this.currentConfig = {
+            server: "test.chaguo.tz",
+            port: 443,
+            protocol: "v2ray-ws",
+            userId: this.generateUUID(),
+            timestamp: Date.now(),
+            expires: Date.now() + 86400000
+        };
+        
+        const configText = JSON.stringify(this.currentConfig, null, 2);
+        document.getElementById('config-text').value = configText;
+        
+        // Check if QRCode is available
+        if (typeof QRCode !== 'undefined') {
+            try {
                 new QRCode(qrContainer, {
                     text: configText,
                     width: 256,
                     height: 256,
                     colorDark: "#2E7D32",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
+                    colorLight: "#ffffff"
                 });
-                console.log('QR Code generated successfully');
-            } else {
+                console.log('✅ QR Code generated with library');
+            } catch (qrError) {
+                console.log('QR library error, using fallback:', qrError);
                 this.showFallbackQR(qrContainer, configText);
             }
-            
-            // Start expiry timer
-            this.startExpiryTimer();
-            
-        } catch (error) {
-            console.error('QR generation error:', error);
-            this.showToast('Error generating QR code', 'error');
+        } else {
+            console.log('QR library not loaded, using fallback');
+            this.showFallbackQR(qrContainer, configText);
         }
+        
+        this.startExpiryTimer();
+        
+    } catch (error) {
+        console.error('QR generation error:', error);
+        this.showToast('Error generating QR code', 'error');
     }
+}
 
     generateUUID() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -262,3 +260,4 @@ class ChaguoApp {
 document.addEventListener('DOMContentLoaded', () => {
     window.chaguoApp = new ChaguoApp();
 });
+
