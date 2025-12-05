@@ -6,7 +6,10 @@
     <title>Chaguo - Internet Freedom for Tanzania</title>
     <meta name="description" content="Open-source toolkit to bypass internet restrictions in Tanzania">
     <meta name="theme-color" content="#2E7D32">
-    
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/chaguo-tanzania/manifest.json">
     
@@ -14,10 +17,10 @@
     <link rel="stylesheet" href="style.css">
     
     <!-- QR Code Library -->
-   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
     
     <!-- PWA Service Worker Registration -->
-   <script>
+    <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             const swUrl = 'sw.js';
@@ -60,7 +63,7 @@
             }
         }, 3000);
     });
-</script>
+    </script>
 </head>
 <body>
     <!-- Language Switcher -->
@@ -187,6 +190,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
-
-
